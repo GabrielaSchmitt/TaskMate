@@ -25,7 +25,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">MUDAR
+                        <a class="nav-link" href="{% url 'task_create' %}">
                             <i class="fa-solid fa-plus fa-lg"></i> Add Task
                         </a>
                     </li>
@@ -39,7 +39,7 @@
         </div>
     </nav>
     <div class="container-fluid">
-        {% block body %}
+        {% block content %}
         {% endblock %}
     </div>
     <footer class="mt-auto mb-4">

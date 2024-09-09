@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Confirm Delete</h1>
+
+<p>Are you sure you want to delete the task "{{ task.title }}"?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+</form>
+
+<a href="{% url 'home' %}" class="btn btn-secondary mt-3">Cancel</a>
+{% endblock %}

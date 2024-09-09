@@ -1,14 +1,37 @@
 {% extends "base.html" %}
 
-<!-- {% load static %}
-<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+{% block body %}
+<h1>All Tasks</h1>
 
-{% if request.user.is_authenticated %}
-  <p>{{ request.user.username }}</p>
-  <a href="{% url 'logout' %}">Logout</a>
-{% else %}
-  <a href="{% url 'login' %}">Login</a>
-  <a href="{% url 'signup' %}">Signup</a>
-{% endif %}
+<!-- Adiciona um link para criar uma nova tarefa -->
+<a href="{% url 'task_create' %}" class="btn btn-primary mb-3">Add Task</a>
 
-<h1>Welcome!</h1> -->
+<!-- Tabela para exibir a lista de tarefas -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.get_status_display }}</td>
+            <td>
+                <!-- Link para editar a tarefa -->
+                <a href="{% url 'task_edit' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <!-- Link para excluir a tarefa -->
+                <a href="{% url 'task_delete' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No tasks available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
