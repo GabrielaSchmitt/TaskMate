@@ -8,7 +8,7 @@ from .models import Task
 def index(request):
     return render(request, 'index.html')
 
-# signup page
+# Signup page
 def user_signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -19,7 +19,7 @@ def user_signup(request):
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
 
-# login page
+# Login page
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -34,19 +34,22 @@ def user_login(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
-# logout page
+# Logout page
 def user_logout(request):
     logout(request)
     return redirect('login')
 
-# Lista de tarefas
-
+# Task list page
 @login_required
 def task_list(request):
     tasks = Task.objects.filter(assigned_to=request.user)
-    return render(request, 'tasks/index.html', {'tasks': tasks})
+    print(f"Tasks: {tasks}")  # Verifique no console
+    return render(request, 'index.html', {'tasks': tasks})
 
-# tasks/views.py
+
+
+
+# Create task page
 @login_required
 def task_create(request):
     if request.method == 'POST':
@@ -55,11 +58,14 @@ def task_create(request):
             task = form.save(commit=False)
             task.assigned_to = request.user
             task.save()
+            print(f"Task {task.title} created successfully.")  # Verifique no console
             return redirect('task_list')
     else:
         form = TaskForm()
     return render(request, 'task_form.html', {'form': form})
 
+
+# Edit task page
 @login_required
 def task_edit(request, pk):
     task = get_object_or_404(Task, pk=pk, assigned_to=request.user)
@@ -70,12 +76,13 @@ def task_edit(request, pk):
             return redirect('task_list')
     else:
         form = TaskForm(instance=task)
-    return render(request, 'tasks/task_form.html', {'form': form, 'task': task})
+    return render(request, 'task_form.html', {'form': form, 'task': task})
 
+# Delete task page
 @login_required
 def task_delete(request, pk):
     task = get_object_or_404(Task, pk=pk, assigned_to=request.user)
     if request.method == 'POST':
         task.delete()
         return redirect('task_list')
-    return render(request, 'tasks/task_confirm_delete.html', {'task': task})
+    return render(request, 'task_confirm_delete.html', {'task': task})
