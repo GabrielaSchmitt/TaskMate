@@ -83,7 +83,7 @@ $ python manage.py createsuperuser
 
 Agora, o seu sistema de gerenciamento de tarefas está configurado e pronto para uso. Personalize-o de acordo com as suas necessidades específicas.
 
- <br></br>
+ <br>
 
 <h2 align="left" >Equipe 🧠</h2>
 
@@ -91,7 +91,7 @@ Agora, o seu sistema de gerenciamento de tarefas está configurado e pronto para
 - Gabriela Cristina Schmitt (25733150)
 - Vinicius Dionizio Patrocinio (rgm)
 
-<br></br>
+<br>
 
 ✨ Obrigada pela atenção! ✨
 
