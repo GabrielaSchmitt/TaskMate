@@ -20,9 +20,10 @@ class LoginForm(forms.Form):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status']
+        fields = ['title', 'description', 'status', 'is_public']  # Inclua o campo 'is_public'
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

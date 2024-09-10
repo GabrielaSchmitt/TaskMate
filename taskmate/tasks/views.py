@@ -14,7 +14,10 @@ def user_signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('login')  # Redireciona para a página de login após o cadastro
+        else:
+            # Adiciona erros ao formulário, se houver
+            return render(request, 'signup.html', {'form': form})
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
@@ -42,11 +45,24 @@ def user_logout(request):
 # Task list page
 @login_required
 def task_list(request):
-    tasks = Task.objects.filter(assigned_to=request.user)
-    print(f"Tasks: {tasks}")  # Verifique no console
-    return render(request, 'index.html', {'tasks': tasks})
+    status_filter = request.GET.get('status')
+    # Tarefas do usuário e tarefas públicas
+    tasks = Task.objects.filter(assigned_to=request.user) | Task.objects.filter(is_public=True)
 
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
 
+    return render(request, 'task_list.html', {'tasks': tasks})
+
+@login_required
+def public_tasks(request):
+    status_filter = request.GET.get('status')
+    tasks = Task.objects.filter(is_public=True)  # Apenas tarefas públicas
+
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
+
+    return render(request, 'public_task_list.html', {'tasks': tasks})
 
 
 # Create task page
@@ -68,7 +84,7 @@ def task_create(request):
 # Edit task page
 @login_required
 def task_edit(request, pk):
-    task = get_object_or_404(Task, pk=pk, assigned_to=request.user)
+    task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
@@ -78,6 +94,7 @@ def task_edit(request, pk):
         form = TaskForm(instance=task)
     return render(request, 'task_form.html', {'form': form, 'task': task})
 
+
 # Delete task page
 @login_required
 def task_delete(request, pk):
@@ -86,3 +103,4 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'task_confirm_delete.html', {'task': task})
+
