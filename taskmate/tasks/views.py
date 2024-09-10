@@ -45,16 +45,27 @@ def user_logout(request):
     return redirect('login')
 
 # Task list page
-@login_required
+# tasks/views.py
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Task
+
+
 def task_list(request):
-    status_filter = request.GET.get('status')
-    # Tarefas do usuário e tarefas públicas
-    tasks = Task.objects.filter(assigned_to=request.user) | Task.objects.filter(is_public=True)
+    user = request.user
 
-    if status_filter:
-        tasks = tasks.filter(status=status_filter)
+    # Obtendo todas as tarefas atribuídas ao usuário e tarefas públicas
+    user_tasks = Task.objects.filter(assigned_to=user)
+    public_tasks = Task.objects.filter(is_public=True).exclude(assigned_to=user)
 
-    return render(request, 'task_list.html', {'tasks': tasks})
+    # Combine as tarefas do usuário e as públicas
+    tasks = user_tasks | public_tasks
+
+    # Verifique o que está sendo passado para o template
+    print(tasks)
+
+    return render(request, 'task_list.html', {'tasks': tasks, 'user': user})
+
 
 @login_required
 def public_tasks(request):
@@ -68,15 +79,17 @@ def public_tasks(request):
 
 
 # Create task page
+from django.shortcuts import render, redirect
+from .forms import TaskForm
+
 @login_required
 def task_create(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
-            task.assigned_to = request.user
-            task.save()
-            print(f"Task {task.title} created successfully.")  # Verifique no console
+            task.created_by = request.user  # Define o usuário logado como criador
+            task.save()  # Salva a tarefa
             return redirect('task_list')
     else:
         form = TaskForm()
@@ -105,5 +118,15 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'task_confirm_delete.html', {'task': task})
+
+@login_required
+def dashboard(request):
+    status_filter = request.GET.get('status')
+    tasks = Task.objects.filter(is_public=True)
+
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
+
+    return render(request, 'dashboard.html', {'tasks': tasks})
 
 

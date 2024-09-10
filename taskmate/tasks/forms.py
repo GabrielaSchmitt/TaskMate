@@ -18,9 +18,11 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 class TaskForm(forms.ModelForm):
+    assigned_to = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'is_public']  # Inclua o campo 'is_public'
+        fields = ['title', 'description', 'status', 'is_public', 'assigned_to']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
