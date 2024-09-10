@@ -4,9 +4,26 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, LoginForm, TaskForm
 from .models import Task
 
-# Home page
-def index(request):
-    return render(request, 'index.html')
+@login_required
+def dashboard(request):
+    user = request.user
+    status_filter = request.GET.get('status')
+    tasks = Task.objects.filter(created_by=user)
+
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
+
+    return render(request, 'index.html', {
+        'tasks': tasks,
+        'status_filter': status_filter,
+        'status_choices': Task.STATUS_CHOICES, 
+        'user': user
+    })
+
+@login_required
+def me(request):
+    user = request.user
+    return render(request, 'me.html', {'user': user})
 
 # Signup page
 def user_signup(request):
@@ -44,43 +61,21 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-# Task list page
-# tasks/views.py
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Task
-
-
 def task_list(request):
     user = request.user
-
-    # Obtendo todas as tarefas atribuídas ao usuário e tarefas públicas
-    user_tasks = Task.objects.filter(assigned_to=user)
-    public_tasks = Task.objects.filter(is_public=True).exclude(assigned_to=user)
-
-    # Combine as tarefas do usuário e as públicas
-    tasks = user_tasks | public_tasks
-
-    # Verifique o que está sendo passado para o template
-    print(tasks)
-
-    return render(request, 'task_list.html', {'tasks': tasks, 'user': user})
-
-
-@login_required
-def public_tasks(request):
     status_filter = request.GET.get('status')
-    tasks = Task.objects.filter(is_public=True)  # Apenas tarefas públicas
-
+    from django.db.models import Q
+    user_tasks = Task.objects.filter(Q(is_public=True) | Q(created_by=request.user))
+    
     if status_filter:
-        tasks = tasks.filter(status=status_filter)
+        user_tasks = user_tasks.filter(status=status_filter)
 
-    return render(request, 'public_task_list.html', {'tasks': tasks})
-
-
-# Create task page
-from django.shortcuts import render, redirect
-from .forms import TaskForm
+    return render(request, 'task_list.html', {
+        'tasks': user_tasks, 
+        'status_filter': status_filter, 
+        'status_choices': Task.STATUS_CHOICES, 
+        'user': user
+    })
 
 @login_required
 def task_create(request):
@@ -118,15 +113,3 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'task_confirm_delete.html', {'task': task})
-
-@login_required
-def dashboard(request):
-    status_filter = request.GET.get('status')
-    tasks = Task.objects.filter(is_public=True)
-
-    if status_filter:
-        tasks = tasks.filter(status=status_filter)
-
-    return render(request, 'dashboard.html', {'tasks': tasks})
-
-

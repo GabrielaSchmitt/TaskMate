@@ -12,8 +12,9 @@ class Task(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tasks', null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)  # Adiciona a data e hora de criação
+    created_at = models.DateTimeField(auto_now_add=True)
     is_public = models.BooleanField(default=False)
 
     def __str__(self):
