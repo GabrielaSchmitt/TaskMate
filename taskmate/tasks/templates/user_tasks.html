@@ -1,11 +1,8 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="mt-3">
-    <h2>Minhas Tarefas e Tarefas Públicas</h2>
+    <h2>Tarefas de {{ user.username }}</h2>
 </div>
-
-
 <div class="container">
     <form method="get" class="form-inline mb-3 p-3">
         <label for="status">Filter by status:</label>
@@ -18,7 +15,6 @@
         <button type="submit" class="btn btn-primary form-control">Filter</button>
     </form>
 </div>
-
 <table class="table">
     <thead>
         <tr>
@@ -39,7 +35,7 @@
             <td>{{ task.description }}</td>
             <td>{{ task.get_status_display }}</td>
             <td>
-                {% if task.assigned_to == user %}
+                {% if request_user_is_admin or task.assigned_to == user %}
                 <a href="{% url 'task_edit' task.pk %}" class="btn btn-warning btn-sm">Edit</a>
                 <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger btn-sm">Delete</a>
                 {% endif %}
@@ -56,5 +52,4 @@
         {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'task_create' %}" class="btn btn-primary">Add Task</a>
 {% endblock %}

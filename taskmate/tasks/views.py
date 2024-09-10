@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from .forms import SignupForm, LoginForm, TaskForm
 from .models import Task
 
@@ -9,7 +10,12 @@ def dashboard(request):
     user = request.user
     status_filter = request.GET.get('status')
     tasks = Task.objects.filter(created_by=user)
-
+    userIsAdmin = user.is_superuser
+    users = []
+    
+    if userIsAdmin:
+        users = User.objects.all()
+    
     if status_filter:
         tasks = tasks.filter(status=status_filter)
 
@@ -17,7 +23,29 @@ def dashboard(request):
         'tasks': tasks,
         'status_filter': status_filter,
         'status_choices': Task.STATUS_CHOICES, 
-        'user': user
+        'user': user,
+        'userIsAdmin': userIsAdmin,
+        'users': users
+    })
+
+@login_required
+def user_tasks(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    tasks = Task.objects.filter(created_by=user)
+    status_filter = request.GET.get('status')
+    request_user_is_admin = request.user.is_superuser
+    
+    if(not request_user_is_admin):
+        return redirect('home')
+
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
+
+    return render(request, 'user_tasks.html', {
+        'tasks': tasks,
+        'status_filter': status_filter,
+        'status_choices': Task.STATUS_CHOICES,
+        'user': user,
     })
 
 @login_required
