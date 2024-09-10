@@ -87,7 +87,7 @@ Agora, o seu sistema de gerenciamento de tarefas está configurado e pronto para
 
 <h2 align="left" >Equipe 🧠</h2>
 
-- Arthur Diesel (rgm)
+- Arthur Diesel (26681706)
 - Gabriela Cristina Schmitt (25733150)
 - Vinicius Dionizio Patrocinio (rgm)
 
