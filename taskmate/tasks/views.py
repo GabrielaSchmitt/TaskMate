@@ -17,10 +17,12 @@ def user_signup(request):
             return redirect('login')  # Redireciona para a página de login após o cadastro
         else:
             # Adiciona erros ao formulário, se houver
+            print(form.errors)  # Adicione isso para depurar
             return render(request, 'signup.html', {'form': form})
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
+
 
 # Login page
 def user_login(request):
@@ -103,4 +105,5 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'task_confirm_delete.html', {'task': task})
+
 
