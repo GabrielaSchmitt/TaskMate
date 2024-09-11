@@ -89,7 +89,7 @@ Agora, o seu sistema de gerenciamento de tarefas está configurado e pronto para
 
 - Arthur Diesel (26681706)
 - Gabriela Cristina Schmitt (25733150)
-- Vinicius Dionizio Patrocinio (rgm)
+- Vinicius Dionizio Patrocinio (27038386)
 
 <br>
 
